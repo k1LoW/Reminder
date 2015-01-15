@@ -21,6 +21,7 @@
 <?php
   public $reminder = array(
     'transport' => 'Smtp',
+    'subject' => 'Password reminder',
     'from' => array('reminder@example.com' => 'Reminder'),
     'host' => 'smtp.example.com',
     'username' => 'reminder@example.com',
