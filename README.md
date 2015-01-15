@@ -38,8 +38,8 @@
 <?php
   Configure::write('Reminder.models', [
     'User' => [
-      'email' => 'email',
-      'expire' => 60 * 60 * 24,
+      'email' => 'email', // email field name
+      'expire' => 60 * 60 * 24, // reminder url expire range (seconds)
     ],
   ]);
 ```
