@@ -1,6 +1,8 @@
 <?php
 
 App::uses('ReminderAppController', 'Reminder.Controller');
+App::uses('ReminderConfigLoader', 'Reminder.Lib');
+
 class ReminderController extends ReminderAppController {
 
     public $uses = array(
@@ -31,13 +33,8 @@ class ReminderController extends ReminderAppController {
         $models = Configure::read('Reminder.models');
         $modelName = Inflector::classify($model);
 
-        if (!empty($models[$modelName]['layout'])) {
-            $this->layout = $models[$modelName]['layout'];
-        }
-
-        if (!array_key_exists($modelName, $models)) {
-            throw new NotFoundException();
-        }
+        $loader = ReminderConfigLoader::init($modelName);
+        $layout = $loader->load('layout');
 
         try {
             $this->Reminder = ClassRegistry::init('Reminder.Reminder');
@@ -48,7 +45,11 @@ class ReminderController extends ReminderAppController {
                     __('Reminder mail has been sent'),
                     Configure::read('Reminder.setFlashElement.success'),
                     Configure::read('Reminder.setFlashParams.success'));
-                return $this->render('sent');
+                $view = $loader->load('view.sent');
+                if (empty($view)) {
+                    $view = 'sent';
+                }
+                return $this->render($view, $layout);
             }
         } catch (ReminderException $e) {
             $this->Session->setFlash($e->getMessage(),
@@ -56,13 +57,19 @@ class ReminderController extends ReminderAppController {
             Configure::read('Reminder.setFlashParams.error'));
         }
 
-        $emailField = $models[$modelName]['email'];
+        $emailField = $loader->load('email');
 
         $this->set(array(
             'model' => $model,
             'modelName' => $modelName,
             'emailField' => $emailField,
         ));
+
+        $view = $loader->load('view.send');
+        if (empty($view)) {
+            $view = 'send';
+        }
+        return $this->render($view, $layout);
     }
 
     /**
@@ -97,12 +104,9 @@ class ReminderController extends ReminderAppController {
         }
 
         $reminder = $this->Reminder->findActiveReminder($hash);
-        $models = Configure::read('Reminder.models');
         $modelName = $reminder['Reminder']['model'];
-
-        if (!empty($models[$modelName]['layout'])) {
-            $this->layout = $models[$modelName]['layout'];
-        }
+        $loader = ReminderConfigLoader::init($modelName);
+        $layout = $loader->load('layout');
 
         $account = $this->Reminder->findAccount($reminder);
         if (empty($account)) {
@@ -114,6 +118,12 @@ class ReminderController extends ReminderAppController {
             'account' => $account,
             'modelName' => $modelName,
         ));
+
+        $view = $loader->load('view.reset_password');
+        if (empty($view)) {
+            $view = 'reset_password';
+        }
+        return $this->render($view, $layout);
     }
 
     /**
@@ -123,9 +133,8 @@ class ReminderController extends ReminderAppController {
     public function complete($hash){
         $reminder = $this->Reminder->findReminder($hash);
         $modelName = $reminder['Reminder']['model'];
-        if (!empty($models[$modelName]['layout'])) {
-            $this->layout = $models[$modelName]['layout'];
-        }
+        $loader = ReminderConfigLoader::init($modelName);
+        $layout = $loader->load('layout');
 
         $account = $this->Reminder->findAccount($reminder);
         if (empty($account)) {
@@ -137,5 +146,11 @@ class ReminderController extends ReminderAppController {
             'account' => $account,
             'modelName' => $modelName,
         ));
+
+        $view = $loader->load('view.complete');
+        if (empty($view)) {
+            $view = 'complete';
+        }
+        return $this->render($view, $layout);
     }
 }

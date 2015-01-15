@@ -1,12 +1,16 @@
 <?php
 App::uses('CakeEmail', 'Network/Email');
+App::uses('ReminderConfigLoader', 'Reminder.Lib');
 class ReminderMail {
 
     /**
-     * send
+     * sendResetMail
      *
      */
-    public static function send($data, $user){
+    public static function sendResetMail($data, $user){
+        $modelName = $data['model'];
+        $loader = ReminderConfigLoader::init($modelName);
+
         $email = new CakeEmail('reminder');
         $from = $email->from();
         if (empty($from)) {
@@ -17,7 +21,11 @@ class ReminderMail {
             $email->subject('Reminder');
         }
         $email->to($data['email']);
-        $email->template('Reminder.reminder');
+        $template = $loader->load('view.reset_mail');
+        if (empty($template)) {
+            $template = 'reset_mail';
+        }
+        $email->template('Reminder.' . $template);
         $email->viewVars(array(
             'data' => $data,
             'user' => $user,

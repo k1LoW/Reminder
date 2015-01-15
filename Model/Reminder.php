@@ -3,13 +3,9 @@
 App::uses('ReminderAppModel', 'Reminder.Model');
 App::uses('ReminderMail', 'Reminder.Network/Email');
 App::uses('ReminderException', 'Reminder.Error');
+App::uses('ReminderConfigLoader', 'Reminder.Lib');
 
 class Reminder extends ReminderAppModel {
-
-    public $actsAs = array(
-        'Yav.AdditionalValidationRules',
-        'Yav.AdditionalValidationPatterns',
-    );
 
     public $validate = array();
 
@@ -18,44 +14,19 @@ class Reminder extends ReminderAppModel {
      *
      */
     public function send($data, $modelName){
-        $models = Configure::read('Reminder.models');
+        $loader = ReminderConfigLoader::init($modelName);
 
         if (empty($data)) {
             return;
         }
 
-        $emailField = $models[$modelName]['email'];
-        $this->validate = array(
-            $emailField => array(
-                'notEmpty' => array(
-                    'rule' => array('notEmpty'),
-                    'required' => true,
-                    'last' => true
-                ),
-                'email' => array(
-                    'rule' => array('formatFuzzyEmail'),
-                    'allowEmpty' => true,
-                    'last' => true,
-                ),
-            ),
-        );
-
-        $model = ClassRegistry::init($modelName);
-        
-        // email validation only
-        $this->create();
-        $this->set($data[$modelName]);
-        $result = $this->validates();
-        if ($result === false) {
-            $model->validationErrors = $this->validationErrors;
-            throw new ReminderException();
-        }
-
+        $model = ClassRegistry::init($modelName);        
         $account = $model->findAccount($data);
         if (empty($account)) {
             return true;
         }
-
+        
+        $emailField = $loader->load('email');
         $email = $data[$modelName][$emailField];
         $hash = sha1(uniqid('', true) . json_encode($account));
 
@@ -82,7 +53,7 @@ class Reminder extends ReminderAppModel {
             throw new OutOfBoundsException(__('Could not save, please check your inputs.', true));
         }
 
-        ReminderMail::send($data, $account);
+        ReminderMail::sendResetMail($data, $account);
         return true;
     }
 
@@ -110,8 +81,6 @@ class Reminder extends ReminderAppModel {
      *
      */
     public function findReminder($hash){
-        $models = Configure::read('Reminder.models');
-
         $query = array(
             'conditions' => array(
                 'Reminder.hash' => $hash,
@@ -130,8 +99,6 @@ class Reminder extends ReminderAppModel {
      *
      */
     public function findActiveReminder($hash){
-        $models = Configure::read('Reminder.models');
-
         $query = array(
             'conditions' => array(
                 'Reminder.hash' => $hash,
@@ -145,8 +112,10 @@ class Reminder extends ReminderAppModel {
         }
 
         $modelName = $result['Reminder']['model'];
+        $loader = ReminderConfigLoader::init($modelName);
+
         $created = $result['Reminder']['created'];
-        $expire = $models[$modelName]['expire'];
+        $expire = $loader->load('expire');
 
         if (strtotime($created) > strtotime('+' . $expire . ' seconds')) {
             throw new UnauthorizedException();

@@ -55,6 +55,10 @@
    */
   public function findAccount($data){
     $email = $data['User']['email'];
+    if (empty($email)) {
+      $this->invalidate('email', 'Not empty email');
+      throw new ReminderException();
+    }
     $query = array(
       'conditions' => array(
         'User.email' => $email
@@ -96,25 +100,27 @@ Access /reminder/user
 
 ## Design change
 
-### View files
+### Default layout
 
-Create following view files.
+```php
+<?php
+  // default layout setting
+  Configure::write('Reminder.layout', 'mylayout');
+```
+
+### View change
+
+Create following view/template files.
 
 - app/View/Plugin/Reminder/Reminder/send.ctp
 - app/View/Plugin/Reminder/Reminder/sent.ctp
 - app/View/Plugin/Reminder/Reminder/reset_password.ctp
 - app/View/Plugin/Reminder/Reminder/complete.ctp
-- app/View/Plugin/Reminder/Emails/text/reminder.ctp
+- app/View/Plugin/Reminder/Emails/text/reset_mail.ctp
 
-### Layout
+### Custom settings
 
-```php
-<?php
-  // default layout setting
-  Configure::write('Reminder.layout', 'ajax');
-```
-
-or
+Create view/template/layout files and custom settings
 
 ```php
 <?php
@@ -122,7 +128,14 @@ or
     'User' => [
       'email' => 'email',
       'expire' => 60 * 60 * 24,
-      'layout' => 'User/default', // User layout setting
+      'layout' => 'User/default', // User custom layout setting
+      'view' => [ // User custom view/template setting
+        'send' => 'user_send',
+        'sent' => 'user_sent',
+        'reset_password' => 'user_reset_password',
+        'complete' => 'user_complete',
+        'reset_mail' => 'user_send',
+      ],
     ],
     'Administrator' => [
       'email' => 'email',
