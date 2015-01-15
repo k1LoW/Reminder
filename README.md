@@ -51,6 +51,7 @@
 <?php
   /**
    * findAccount
+   * check $data and find account
    * for Reminder plugin
    *
    */
@@ -74,6 +75,7 @@
 <?php
   /**
    * resetPassword
+   * reset account password
    * for Reminder plugin
    *
    */
