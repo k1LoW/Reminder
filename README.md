@@ -63,9 +63,12 @@ Access /reminder/user
 
 ### View files
 
+Create following view files.
+
 - app/View/Plugin/Reminder/Reminder/send.ctp
 - app/View/Plugin/Reminder/Reminder/reset_password.ctp
 - app/View/Plugin/Reminder/Reminder/complete.ctp
+- app/View/Plugin/Reminder/Emails/text/reminder.ctp
 
 ### Layout
 
