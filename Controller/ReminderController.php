@@ -48,6 +48,7 @@ class ReminderController extends ReminderAppController {
                     __('Reminder mail has been sent'),
                     Configure::read('Reminder.setFlashElement.success'),
                     Configure::read('Reminder.setFlashParams.success'));
+                return $this->render('sent');
             }
         } catch (Exception $e) {
             $this->Session->setFlash($e->getMessage(),
@@ -78,6 +79,10 @@ class ReminderController extends ReminderAppController {
                 if (!empty($models[$modelName]['layout'])) {
                     $this->layout = $models[$modelName]['layout'];
                 }
+                $this->Session->setFlash(
+                    __('Password reset complete'),
+                    Configure::read('Reminder.setFlashElement.success'),
+                    Configure::read('Reminder.setFlashParams.success'));
                 return $this->render('complete');
             } elseif ($result === false) {
                 $this->Session->setFlash(__('Validation Error'),
