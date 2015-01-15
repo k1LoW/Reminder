@@ -1,4 +1,4 @@
-# Password Reminder plugin for CakePHP
+# Password reminder plugin for CakePHP
 
 ## Usage
 
