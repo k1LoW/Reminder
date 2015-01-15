@@ -127,3 +127,7 @@ or
       'error' => [],
   ]);
 ```
+
+## License
+
+The MIT License
