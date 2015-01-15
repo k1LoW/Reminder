@@ -13,7 +13,6 @@
         }
     ],
     "require": {
-        "ichikaway/cakeplus": "2.*",
         "k1low/yav": "2.*",
         "composer/installers": "*"
     },

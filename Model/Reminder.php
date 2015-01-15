@@ -6,15 +6,23 @@ App::uses('ReminderMail', 'Reminder.Network/Email');
 class Reminder extends ReminderAppModel {
 
     public $actsAs = array(
-        'Cakeplus.ValidationPatterns',
-        'Cakeplus.ValidationErrorI18n',
-        'Cakeplus.AddValidationRule',
         'Yav.AdditionalValidationRules',
         'Yav.AdditionalValidationPatterns',
     );
 
     public $validate = array(
-        'email' => array('require', 'notempty', 'fuzzy_email'),
+        'email' => array(
+            'notEmpty' => array(
+                'rule' => array('notEmpty'),
+                'required' => true,
+                'last' => true
+            ),
+            'fuzzy_email' => array(
+                'rule' => array('formatFuzzyEmail'),
+                'allowEmpty' => true,
+                'last' => true,
+            ),
+        ),
     );
 
     /**
