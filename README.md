@@ -84,7 +84,13 @@ or
       'email' => 'email',
       'password' => 'password',
       'expire' => 60 * 60 * 24,
-      'layout' => 'User/default'
+      'layout' => 'User/default', // User layout setting
+    ],
+    'Administrator' => [
+      'email' => 'email',
+      'password' => 'password',
+      'expire' => 60 * 60,
+      'layout' => 'Admin/default', // Administrator layout setting
     ],
   ]);
 ```
