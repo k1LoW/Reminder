@@ -19,17 +19,17 @@
 
 ```php
 <?php
-  public $reminder = array(
+  public $reminder = [
     'transport' => 'Smtp',
     'subject' => 'Password reminder',
-    'from' => array('reminder@example.com' => 'Reminder'),
+    'from' => ['reminder@example.com' => 'Reminder'],
     'host' => 'smtp.example.com',
     'username' => 'reminder@example.com',
     'password' => 'xxxxxxxxx',
     'log' => true,
     'charset' => 'utf-8',
     'headerCharset' => 'utf-8',
-  );
+  ];
 ```
 
 ### Set Reminder.models
@@ -82,6 +82,7 @@ Access /reminder/user
 Create following view files.
 
 - app/View/Plugin/Reminder/Reminder/send.ctp
+- app/View/Plugin/Reminder/Reminder/sent.ctp
 - app/View/Plugin/Reminder/Reminder/reset_password.ctp
 - app/View/Plugin/Reminder/Reminder/complete.ctp
 - app/View/Plugin/Reminder/Emails/text/reminder.ctp
@@ -117,12 +118,12 @@ or
 ```php
 <?php
   // setFlash settings
-  Configure::write('Reminder.setFlashElement', array(
+  Configure::write('Reminder.setFlashElement', [
       'success' => 'alert',
       'error' => 'alert',
-  ));
-  Configure::write('Reminder.setFlashParams', array(
-      'success' => array(),
-      'error' => array(),
-  ));
+  ]);
+  Configure::write('Reminder.setFlashParams', [
+      'success' => [],
+      'error' => [],
+  ]);
 ```
