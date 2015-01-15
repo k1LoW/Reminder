@@ -43,12 +43,12 @@ class Reminder extends ReminderAppModel {
             ),
         );
 
-        $current = $model->find('first', $query);
-        if (empty($current)) {
+        $user = $model->find('first', $query);
+        if (empty($user)) {
             return true;
         }
 
-        $hash = sha1(uniqid('', true) . json_encode($current));
+        $hash = sha1(uniqid('', true) . json_encode($user));
 
         $url = Router::url(array(
             'plugin' => 'reminder',
@@ -60,7 +60,7 @@ class Reminder extends ReminderAppModel {
 
         $data = array(
             'model' => $modelName,
-            'model_id' => $current[$modelName]['id'],
+            'model_id' => $user[$modelName]['id'],
             'email' => $email,
             'hash' => $hash,
             'url' => $url,
@@ -73,7 +73,7 @@ class Reminder extends ReminderAppModel {
             throw new OutOfBoundsException(__('Could not save, please check your inputs.', true));
         }
 
-        ReminderMail::send($data, $current);
+        ReminderMail::send($data, $user);
         return true;
     }
 
