@@ -162,7 +162,12 @@ class Reminder extends ReminderAppModel {
         $modelName = $reminder['Reminder']['model'];
         $model_id = $reminder['Reminder']['model_id'];
         $model = ClassRegistry::init($modelName);
-        $user = $model->findById($model_id);
+        $query = array(
+            'conditions' => array(
+                "{$model->alias}.{$model->primaryKey}" => $model_id
+            )
+        );
+        $user = $model->find('first', $query);
         return $user;
     }
 

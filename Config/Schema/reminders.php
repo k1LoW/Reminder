@@ -11,7 +11,7 @@ class remindersSchema extends CakeSchema {
     public $reminders = array(
         'id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'key' => 'primary'),
         'model' => array('type' => 'text', 'null' => true, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
-        'model_id' => array('type' => 'integer', 'null' => true, 'default' => NULL),
+        'model_id' => array('type' => 'text', 'null' => true, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
         'email' => array('type' => 'text', 'null' => true, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
         'hash' => array('type' => 'text', 'null' => true, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
         'expired' => array('type' => 'datetime', 'null' => true, 'default' => NULL),
