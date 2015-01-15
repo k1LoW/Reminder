@@ -1,6 +1,6 @@
 <?php
 
-// layout setting
+// default layout setting
 Configure::write('Reminder.layout', 'default');
 
 // setFlash settings

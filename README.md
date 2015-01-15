@@ -15,14 +15,29 @@
   ]);
 ```
 
-### Setting Reminder.models
+### Set $reminder to app/Config/email.php
+
+```php
+<?php
+  public $reminder = array(
+    'transport' => 'Smtp',
+    'from' => array('reminder@example.com' => 'Reminder'),
+    'host' => 'smtp.example.com',
+    'username' => 'reminder@example.com',
+    'password' => 'xxxxxxxxx',
+    'log' => true,
+    'charset' => 'utf-8',
+    'headerCharset' => 'utf-8',
+  );
+```
+
+### Set Reminder.models
 
 ```php
 <?php
   Configure::write('Reminder.models', [
     'User' => [
       'email' => 'email',
-      'password' => 'password',
       'expire' => 60 * 60 * 24,
     ],
   ]);
@@ -85,19 +100,16 @@ or
   Configure::write('Reminder.models', [
     'User' => [
       'email' => 'email',
-      'password' => 'password',
       'expire' => 60 * 60 * 24,
       'layout' => 'User/default', // User layout setting
     ],
     'Administrator' => [
       'email' => 'email',
-      'password' => 'password',
       'expire' => 60 * 60,
       'layout' => 'Admin/default', // Administrator layout setting
     ],
   ]);
 ```
-
 
 ### setFlash Messages
 
