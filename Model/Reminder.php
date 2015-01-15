@@ -56,7 +56,7 @@ class Reminder extends ReminderAppModel {
             'action' => 'reset_password',
             $hash), true);
 
-        // @todo 既存データを全て期限切れにする
+        $this->disactivate($modelName, $email);
 
         $data = array(
             'model' => $modelName,
@@ -75,6 +75,25 @@ class Reminder extends ReminderAppModel {
 
         ReminderMail::send($data, $current);
         return true;
+    }
+
+    /**
+     * disactivate
+     *
+     */
+    public function disactivate($modelName, $email){
+        $fields = array(
+            'Reminder.expired' => "'" . date('Y-m-d H:i:s') . "'"
+        );
+        $conditions = array(
+            'Reminder.model' => $modelName,
+            'Reminder.email' => $email,
+            'Reminder.expired' => null,
+        );
+        $result = $this->updateAll($fields, $conditions);
+        if (!$result) {
+            throw new InternalErrorException();
+        }
     }
 
     /**
