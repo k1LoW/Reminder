@@ -44,7 +44,26 @@
   ]);
 ```
 
-### Create User::resetPassword()
+### Create User::findAccount(), User::resetPassword()
+
+```php
+<?php
+  /**
+   * findAccount
+   * for Reminder plugin
+   *
+   */
+  public function findAccount($data){
+    $email = $data['User']['email'];
+    $query = array(
+      'conditions' => array(
+        'User.email' => $email
+      ),
+    );
+    $user = $this->find('first', $query);
+    return $user;
+  }
+```
 
 ```php
 <?php

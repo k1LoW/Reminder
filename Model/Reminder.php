@@ -2,6 +2,7 @@
 
 App::uses('ReminderAppModel', 'Reminder.Model');
 App::uses('ReminderMail', 'Reminder.Network/Email');
+App::uses('ReminderException', 'Reminder.Error');
 
 class Reminder extends ReminderAppModel {
 
@@ -10,20 +11,7 @@ class Reminder extends ReminderAppModel {
         'Yav.AdditionalValidationPatterns',
     );
 
-    public $validate = array(
-        'email' => array(
-            'notEmpty' => array(
-                'rule' => array('notEmpty'),
-                'required' => true,
-                'last' => true
-            ),
-            'fuzzy_email' => array(
-                'rule' => array('formatFuzzyEmail'),
-                'allowEmpty' => true,
-                'last' => true,
-            ),
-        ),
-    );
+    public $validate = array();
 
     /**
      * send
@@ -36,27 +24,40 @@ class Reminder extends ReminderAppModel {
             return;
         }
 
-        $this->create();
-        $this->set($data);
-        $result = $this->validates();
-        if ($result === false) {
-            throw new ValidationException();
-        }
-
-        $email = $data['Reminder']['email'];
-        $model = ClassRegistry::init($modelName);
-        $query = array(
-            'conditions' => array(
-                $model->alias . '.' . $models[$modelName]['email'] => $email
+        $emailField = $models[$modelName]['email'];
+        $this->validate = array(
+            $emailField => array(
+                'notEmpty' => array(
+                    'rule' => array('notEmpty'),
+                    'required' => true,
+                    'last' => true
+                ),
+                'email' => array(
+                    'rule' => array('formatFuzzyEmail'),
+                    'allowEmpty' => true,
+                    'last' => true,
+                ),
             ),
         );
 
-        $user = $model->find('first', $query);
-        if (empty($user)) {
+        $model = ClassRegistry::init($modelName);
+        
+        // email validation only
+        $this->create();
+        $this->set($data[$modelName]);
+        $result = $this->validates();
+        if ($result === false) {
+            $model->validationErrors = $this->validationErrors;
+            throw new ReminderException();
+        }
+
+        $account = $model->findAccount($data);
+        if (empty($account)) {
             return true;
         }
 
-        $hash = sha1(uniqid('', true) . json_encode($user));
+        $email = $data[$modelName][$emailField];
+        $hash = sha1(uniqid('', true) . json_encode($account));
 
         $url = Router::url(array(
             'plugin' => 'reminder',
@@ -68,7 +69,7 @@ class Reminder extends ReminderAppModel {
 
         $data = array(
             'model' => $modelName,
-            'model_id' => $user[$modelName]['id'],
+            'model_id' => $account[$modelName][$model->primaryKey],
             'email' => $email,
             'hash' => $hash,
             'url' => $url,
@@ -81,7 +82,7 @@ class Reminder extends ReminderAppModel {
             throw new OutOfBoundsException(__('Could not save, please check your inputs.', true));
         }
 
-        ReminderMail::send($data, $user);
+        ReminderMail::send($data, $account);
         return true;
     }
 
@@ -155,10 +156,10 @@ class Reminder extends ReminderAppModel {
     }
 
     /**
-     * findUser
+     * findAccount
      *
      */
-    public function findUser($reminder){
+    public function findAccount($reminder){
         $modelName = $reminder['Reminder']['model'];
         $model_id = $reminder['Reminder']['model_id'];
         $model = ClassRegistry::init($modelName);
@@ -167,8 +168,8 @@ class Reminder extends ReminderAppModel {
                 "{$model->alias}.{$model->primaryKey}" => $model_id
             )
         );
-        $user = $model->find('first', $query);
-        return $user;
+        $account = $model->find('first', $query);
+        return $account;
     }
 
     /**

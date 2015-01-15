@@ -50,14 +50,18 @@ class ReminderController extends ReminderAppController {
                     Configure::read('Reminder.setFlashParams.success'));
                 return $this->render('sent');
             }
-        } catch (Exception $e) {
+        } catch (ReminderException $e) {
             $this->Session->setFlash($e->getMessage(),
             Configure::read('Reminder.setFlashElement.error'),
             Configure::read('Reminder.setFlashParams.error'));
         }
 
+        $emailField = $models[$modelName]['email'];
+
         $this->set(array(
             'model' => $model,
+            'modelName' => $modelName,
+            'emailField' => $emailField,
         ));
     }
 
@@ -86,7 +90,7 @@ class ReminderController extends ReminderAppController {
                 Configure::read('Reminder.setFlashElement.error'),
                 Configure::read('Reminder.setFlashParams.error'));
             }
-        } catch (Exception $e) {
+        } catch (ReminderException $e) {
             $this->Session->setFlash($e->getMessage(),
             Configure::read('Reminder.setFlashElement.error'),
             Configure::read('Reminder.setFlashParams.error'));
@@ -100,14 +104,14 @@ class ReminderController extends ReminderAppController {
             $this->layout = $models[$modelName]['layout'];
         }
 
-        $user = $this->Reminder->findUser($reminder);
-        if (empty($user)) {
+        $account = $this->Reminder->findAccount($reminder);
+        if (empty($account)) {
             throw new NotFoundException();
         }
 
         $this->set(array(
             'hash' => $hash,
-            'user' => $user,
+            'account' => $account,
             'modelName' => $modelName,
         ));
     }
@@ -123,14 +127,14 @@ class ReminderController extends ReminderAppController {
             $this->layout = $models[$modelName]['layout'];
         }
 
-        $user = $this->Reminder->findUser($reminder);
-        if (empty($user)) {
+        $account = $this->Reminder->findAccount($reminder);
+        if (empty($account)) {
             throw new NotFoundException();
         }
 
         $this->set(array(
             'hash' => $hash,
-            'user' => $user,
+            'account' => $account,
             'modelName' => $modelName,
         ));
     }
