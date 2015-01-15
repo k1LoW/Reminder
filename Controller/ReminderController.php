@@ -74,16 +74,13 @@ class ReminderController extends ReminderAppController {
             $result = $this->Reminder->resetPassword($this->request->data, $hash);
 
             if ($result === true) {
-                $reminder = $this->Reminder->findActiveReminder($hash);
-                $modelName = $reminder['Reminder']['model'];
-                if (!empty($models[$modelName]['layout'])) {
-                    $this->layout = $models[$modelName]['layout'];
-                }
                 $this->Session->setFlash(
                     __('Password reset complete'),
                     Configure::read('Reminder.setFlashElement.success'),
                     Configure::read('Reminder.setFlashParams.success'));
-                return $this->render('complete');
+                $this->redirect(array(
+                    'action' => 'complete', $hash
+                ));
             } elseif ($result === false) {
                 $this->Session->setFlash(__('Validation Error'),
                 Configure::read('Reminder.setFlashElement.error'),
@@ -95,8 +92,8 @@ class ReminderController extends ReminderAppController {
             Configure::read('Reminder.setFlashParams.error'));
         }
 
-        $models = Configure::read('Reminder.models');
         $reminder = $this->Reminder->findActiveReminder($hash);
+        $models = Configure::read('Reminder.models');
         $modelName = $reminder['Reminder']['model'];
 
         if (!empty($models[$modelName]['layout'])) {
@@ -113,5 +110,17 @@ class ReminderController extends ReminderAppController {
             'user' => $user,
             'modelName' => $modelName,
         ));
+    }
+
+    /**
+     * complete
+     *
+     */
+    public function complete($hash){
+        $reminder = $this->Reminder->findReminder($hash);
+        $modelName = $reminder['Reminder']['model'];
+        if (!empty($models[$modelName]['layout'])) {
+            $this->layout = $models[$modelName]['layout'];
+        }
     }
 }

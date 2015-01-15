@@ -105,6 +105,26 @@ class Reminder extends ReminderAppModel {
     }
 
     /**
+     * findReminder
+     *
+     */
+    public function findReminder($hash){
+        $models = Configure::read('Reminder.models');
+
+        $query = array(
+            'conditions' => array(
+                'Reminder.hash' => $hash,
+            ),
+        );
+        $result = $this->find('first', $query);
+
+        if (empty($result)) {
+            throw new NotFoundException();
+        }
+        return $result;
+    }
+
+    /**
      * findActiveReminder
      *
      */
