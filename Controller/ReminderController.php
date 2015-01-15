@@ -27,7 +27,7 @@ class ReminderController extends ReminderAppController {
      * send
      *
      */
-    public function send($model = null){
+    public function send($model){
         $models = Configure::read('Reminder.models');
         $modelName = Inflector::classify($model);
 
@@ -122,5 +122,16 @@ class ReminderController extends ReminderAppController {
         if (!empty($models[$modelName]['layout'])) {
             $this->layout = $models[$modelName]['layout'];
         }
+
+        $user = $this->Reminder->findUser($reminder);
+        if (empty($user)) {
+            throw new NotFoundException();
+        }
+
+        $this->set(array(
+            'hash' => $hash,
+            'user' => $user,
+            'modelName' => $modelName,
+        ));
     }
 }
