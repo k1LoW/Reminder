@@ -40,6 +40,7 @@
     'User' => [
       'email' => 'email', // email field name
       'expire' => 60 * 60 * 24, // reminder url expire range (seconds)
+      'subject' => 'This is Reminder mail', // reminder mail subject
     ],
   ]);
 ```

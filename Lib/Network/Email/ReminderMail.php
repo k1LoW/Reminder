@@ -16,10 +16,14 @@ class ReminderMail {
         if (empty($from)) {
             $email->from('reminder@example.com', 'Reminder');
         }
-        $subject = $email->subject();
+        $subject = $loader->load('subject');
         if (empty($subject)) {
-            $email->subject('Reminder');
+            $subject = $email->subject();
         }
+        if (empty($subject)) {
+            $subject = 'Reminder'; // default
+        }
+        $email->subject($subject);
         $email->to($data['email']);
         $template = $loader->load('view.reset_mail');
         if (empty($template)) {
