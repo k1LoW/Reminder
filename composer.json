@@ -1,0 +1,23 @@
+{
+    "name": "k1low/reminder",
+    "description": "Password Reminder plugin for CakePHP",
+    "type": "cakephp-plugin",
+    "keywords": ["cakephp", "reset password"],
+    "homepage": "https://github.com/k1LoW/Reminder",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Ken'ichiro Oyama",
+            "homepage": "https://github.com/k1LoW",
+            "role": "Author"
+        }
+    ],
+    "require": {
+        "ichikaway/cakeplus": "2.*",
+        "k1low/yav": "2.*",
+        "composer/installers": "*"
+    },
+    "require-dev": {
+		"phpunit/phpunit": "3.7.*"
+	}
+}
