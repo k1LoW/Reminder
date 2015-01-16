@@ -20,12 +20,12 @@ class Reminder extends ReminderAppModel {
             return;
         }
 
-        $model = ClassRegistry::init($modelName);        
-        $account = $model->findAccount($data);
+        $model = ClassRegistry::init($modelName);
+        $account = $model->validateAndFindAccount($data);
         if (empty($account)) {
             return true;
         }
-        
+
         $emailField = $loader->load('email');
         $email = $data[$modelName][$emailField];
         $hash = sha1(uniqid('', true) . json_encode($account));
@@ -132,12 +132,7 @@ class Reminder extends ReminderAppModel {
         $modelName = $reminder['Reminder']['model'];
         $model_id = $reminder['Reminder']['model_id'];
         $model = ClassRegistry::init($modelName);
-        $query = array(
-            'conditions' => array(
-                "{$model->alias}.{$model->primaryKey}" => $model_id
-            )
-        );
-        $account = $model->find('first', $query);
+        $account = $model->findAccountById($model_id);
         return $account;
     }
 

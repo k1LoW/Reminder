@@ -45,17 +45,36 @@
   ]);
 ```
 
-### Create User::findAccount(), User::resetPassword()
+### Create User::findAccountById(), User::validateAndFindAccount(), User::resetPassword()
 
 ```php
 <?php
   /**
-   * findAccount
+   * findAccountById
+   * find account by primary key
+   * for Reminder plugin
+   *
+   */
+  public function findAccountById($id){
+    $query = array(
+      'conditions' => array(
+        'User.id' => $id
+      ),
+    );
+    $user = $this->find('first', $query);
+    return $user;
+  }
+```
+
+```php
+<?php
+  /**
+   * validateAndFindAccount
    * check $data and find account
    * for Reminder plugin
    *
    */
-  public function findAccount($data){
+  public function validateAndFindAccount($data){
     $email = $data['User']['email'];
     if (empty($email)) {
       $this->invalidate('email', 'Not empty email');
